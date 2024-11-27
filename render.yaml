@@ -1,0 +1,41 @@
+services:
+  # Configuration du Backend
+  - type: web
+    name: backend
+    env: node
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: MONGO_URI
+        sync: false  # Cette variable doit être configurée manuellement dans le dashboard Render
+      - key: JWT_SECRET
+        sync: false  # Cette variable doit être configurée manuellement dans le dashboard Render
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASSWORD
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+    healthCheckPath: /api/health
+    autoDeploy: true
+    
+  # Configuration du Frontend
+  - type: web
+    name: frontend
+    env: node
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: REACT_APP_API_URL
+        value: https://backend-service.onrender.com  # Remplacez ceci par l'URL de votre backend sur Render
+    autoDeploy: true
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-store
