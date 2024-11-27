@@ -3,8 +3,8 @@ services:
   - type: web
     name: backend
     env: node
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && npm start
+    buildCommand: cd back-server && npm install && npm run build
+    startCommand: cd back-server && npm start
     envVars:
       - key: NODE_ENV
         value: production
@@ -24,18 +24,17 @@ services:
     autoDeploy: true
     
   # Configuration du Frontend
-  - type: web
+  - type: static
     name: frontend
     env: node
-    buildCommand: cd frontend && npm install && npm run build
-    startCommand: cd frontend && npm start
+    buildCommand: |
+      cd front-client
+      npm cache clean --force
+      npm install --legacy-peer-deps
+      CI=false npm run build
+    publishDir: front-client/build
     envVars:
       - key: NODE_ENV
         value: production
       - key: REACT_APP_API_URL
-        value: https://backend-service.onrender.com  # Remplacez ceci par l'URL de votre backend sur Render
-    autoDeploy: true
-    headers:
-      - path: /*
-        name: Cache-Control
-        value: no-store
+        value: https://e-commerce-mern-mzql.onrender.com  # Remplacez ceci par l'URL de votre backend sur Render
